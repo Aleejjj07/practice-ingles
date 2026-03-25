@@ -1,0 +1,91 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { toast, Toaster } from 'react-hot-toast';
+
+// Esta es la estructura que Vercel necesita para "leer" tu código
+export default function EnglishCoach() {
+  const [isListening, setIsListening] = useState(false);
+  const [transcribedText, setTranscribedText] = useState('');
+  const [highlightedWordIdx, setHighlightedWordIdx] = useState(-1);
+  const [currentPhrase, setCurrentPhrase] = useState({ english: "Hello, how are you today?" });
+  const listenKaraokeRef = useRef({ prevIdx: -1, timers: [] });
+
+  // Aquí pegué la lógica que me mostraste
+  const startListening = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast.error("Tu navegador no soporta reconocimiento de voz. Usa Chrome.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = true;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      setHighlightedWordIdx(0);
+      listenKaraokeRef.current = { prevIdx: -1, timers: [] };
+    };
+
+    recognition.onresult = (event) => {
+      let interim = '';
+      let final = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const t = event.results[i][0].transcript;
+        if (event.results[i].isFinal) final += t;
+        else interim += t;
+      }
+      const text = final || interim;
+      setTranscribedText(text);
+
+      const spokenCount = text.trim().split(/\s+/).filter(Boolean).length;
+      const targetIdx = Math.max(0, spokenCount - 1);
+      const { prevIdx, timers } = listenKaraokeRef.current;
+
+      if (targetIdx > prevIdx) {
+        timers.forEach(clearTimeout);
+        const newTimers = [];
+        for (let i = prevIdx + 1; i <= targetIdx; i++) {
+          const delay = (i - prevIdx - 1) * 120;
+          const t = setTimeout(() => setHighlightedWordIdx(i), delay);
+          newTimers.push(t);
+        }
+        listenKaraokeRef.current = { prevIdx: targetIdx, timers: newTimers };
+      }
+      
+      if (final) {
+        setIsListening(false);
+        toast.success("¡Frase capturada!");
+      }
+    };
+
+    recognition.start();
+  };
+
+  return (
+    <div style={{ padding: '40px', textAlign: 'center', fontFamily: 'sans-serif' }}>
+      <Toaster />
+      <h1>English Coach 🗣️</h1>
+      <p>Frase a repetir: <strong>{currentPhrase.english}</strong></p>
+      
+      <div style={{ margin: '20px', fontSize: '24px', minHeight: '50px', color: '#333' }}>
+        {transcribedText || "Haz clic en el botón y empieza a hablar..."}
+      </div>
+
+      <button 
+        onClick={startListening}
+        style={{
+          padding: '15px 30px',
+          fontSize: '18px',
+          backgroundColor: isListening ? '#ff4b4b' : '#4CAF50',
+          color: 'white',
+          border: 'none',
+          borderRadius: '50px',
+          cursor: 'pointer'
+        }}
+      >
+        {isListening ? 'Escuchando...' : '🎙️ Pulsar para hablar'}
+      </button>
+    </div>
+  );
+}
