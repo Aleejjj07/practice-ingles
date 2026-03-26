@@ -2,27 +2,39 @@ import React, { useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 
 const FRASES_BASE = [
-  { english: "Where is the nearest bathroom?", category: "viajes" },
-  { english: "I am looking for the train station.", category: "viajes" },
-  { english: "What time is my flight?", category: "viajes" },
-  { english: "Can you help me with my bags?", category: "viajes" },
-  { english: "Can I have a glass of water, please?", category: "restaurante" },
-  { english: "What do you recommend from the menu?", category: "restaurante" },
-  { english: "The check, please.", category: "restaurante" },
-  { english: "I have a reservation for tonight.", category: "restaurante" },
-  { english: "How much does this cost?", category: "compras" },
-  { english: "Do you have this in a smaller size?", category: "compras" },
-  { english: "Can I pay with credit card?", category: "compras" },
-  { english: "Nice to meet you, what's your name?", category: "saludos" },
-  { english: "How do you spell that?", category: "ayuda" },
-  { english: "Could you speak more slowly, please?", category: "ayuda" },
-  { english: "I don't understand, can you repeat?", category: "ayuda" },
-  { english: "What do you do for a living?", category: "trabajo" },
-  { english: "I am late for the meeting.", category: "trabajo" },
-  { english: "I need help, call an ambulance.", category: "emergencia" },
-  { english: "I lost my passport.", category: "emergencia" },
-  { english: "I am allergic to peanuts.", category: "salud" }
+  { english: "Where is the nearest bathroom?", category: "travel" },
+  { english: "I am looking for the train station.", category: "travel" },
+  { english: "What time is my flight?", category: "travel" },
+  { english: "Can you help me with my bags?", category: "travel" },
+  { english: "Can I have a glass of water, please?", category: "restaurant" },
+  { english: "What do you recommend from the menu?", category: "restaurant" },
+  { english: "The check, please.", category: "restaurant" },
+  { english: "I have a reservation for tonight.", category: "restaurant" },
+  { english: "How much does this cost?", category: "shopping" },
+  { english: "Do you have this in a smaller size?", category: "shopping" },
+  { english: "Can I pay with credit card?", category: "shopping" },
+  { english: "Nice to meet you, what's your name?", category: "greetings" },
+  { english: "How do you spell that?", category: "help" },
+  { english: "Could you speak more slowly, please?", category: "help" },
+  { english: "I don't understand, can you repeat?", category: "help" },
+  { english: "What do you do for a living?", category: "work" },
+  { english: "I am late for the meeting.", category: "work" },
+  { english: "I need help, call an ambulance.", category: "emergency" },
+  { english: "I lost my passport.", category: "emergency" },
+  { english: "I am allergic to peanuts.", category: "health" }
 ];
+
+// Paleta de colores "Modo Oscuro Premium"
+const THEME = {
+  bg: '#121927',            // Fondo muy oscuro (azul-negro)
+  panel: '#1f2937',         // Fondo de los recuadros
+  text: '#f3f4f6',          // Texto principal claro
+  textMuted: '#9ca3af',     // Texto secundario
+  primary: '#38bdf8',       // Azul eléctrico para acentos
+  success: '#10b981',       // Verde lima vibrante para aciertos
+  error: '#ef4444',         // Rojo para errores
+  border: '#374151'         // Color de bordes sutiles
+};
 
 export default function EnglishCoach() {
   const [isListening, setIsListening] = useState(false);
@@ -36,7 +48,6 @@ export default function EnglishCoach() {
     f.english.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // --- FUNCIÓN PARA PASAR A LA SIGUIENTE FRASE ---
   const nextPhrase = () => {
     const currentIndex = filteredPhrases.findIndex(f => f.english === currentPhrase.english);
     const nextIndex = (currentIndex + 1) % filteredPhrases.length;
@@ -52,23 +63,23 @@ export default function EnglishCoach() {
     let missingWords = origWords.filter(word => !spokWords.includes(word));
 
     if (missingWords.length === 0) {
-      setFeedback("✅ ¡Pronunciación perfecta!");
-      toast.success("¡Excelente!");
+      setFeedback(`✅ Perfect! "${original}"`);
+      toast.success("Excellent pronunciation!", { icon: '👏', style: {background: THEME.panel, color: THEME.success} });
     } else {
-      setFeedback(`❌ Te faltó o fallaste en: "${missingWords.join(", ")}"`);
-      toast.error("Vuelve a intentarlo.");
+      setFeedback(`❌ Missed words: ${missingWords.join(", ")}`);
+      toast.error("Keep practicing!", { style: {background: THEME.panel, color: THEME.error} });
     }
   };
 
   const startListening = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      toast.error("Usa Chrome.");
+      toast.error("Usa Chrome o Edge.");
       return;
     }
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-US';
-    recognition.onstart = () => { setIsListening(true); setFeedback('Escuchando...'); };
+    recognition.onstart = () => { setIsListening(true); setFeedback('Listening...'); };
     recognition.onresult = (event) => {
       const text = event.results[0][0].transcript;
       setTranscribedText(text);
@@ -80,62 +91,169 @@ export default function EnglishCoach() {
   };
 
   return (
-    <div style={{ padding: '20px', textAlign: 'center', fontFamily: 'Segoe UI, sans-serif', maxWidth: '600px', margin: 'auto' }}>
+    // Sugerencia 1: Degradado sutil en el fondo oscuro
+    <div style={{ 
+      minHeight: '100vh',
+      padding: '20px', 
+      textAlign: 'center', 
+      fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif', 
+      maxWidth: '800px', 
+      margin: 'auto',
+      backgroundColor: THEME.bg,
+      color: THEME.text,
+      backgroundImage: `linear-gradient(135deg, ${THEME.bg} 0%, #1a2536 100%)`
+    }}>
       <Toaster position="top-center" />
-      <h1 style={{ color: '#2c3e50' }}>English Coach AI 🎙️</h1>
       
-      <input 
-        type="text" 
-        placeholder="🔍 Busca un tema o palabra..." 
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        style={{ padding: '12px', width: '90%', borderRadius: '25px', border: '2px solid #3498db', fontSize: '16px', marginBottom: '20px' }}
-      />
-
-      <div style={{ background: '#ecf0f1', padding: '25px', borderRadius: '20px', border: '1px solid #bdc3c7', marginBottom: '15px' }}>
-        <span style={{ background: '#3498db', color: 'white', padding: '4px 10px', borderRadius: '10px', fontSize: '11px' }}>{currentPhrase.category.toUpperCase()}</span>
-        <h2 style={{ color: '#2c3e50', margin: '15px 0' }}>{currentPhrase.english}</h2>
-        
-        <div style={{ padding: '10px', borderRadius: '10px', background: feedback.startsWith('✅') ? '#d4edda' : '#f8d7da', display: feedback ? 'block' : 'none', marginBottom: '10px' }}>
-          <p style={{ margin: 0, fontWeight: 'bold', color: feedback.startsWith('✅') ? '#155724' : '#721c24' }}>{feedback}</p>
-        </div>
-        
-        <p style={{ fontSize: '16px', color: '#7f8c8d' }}>{transcribedText ? `Dijiste: "${transcribedText}"` : "Pulsa el botón para practicar"}</p>
+      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginBottom: '30px' }}>
+        <h1 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 700 }}>AI English Coach 🎙️</h1>
+      </header>
+      
+      <div style={{ position: 'sticky', top: '10px', background: THEME.bg, zIndex: 10, padding: '10px 0' }}>
+        <input 
+          type="text" 
+          placeholder="🔍 Search topic or word..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ 
+            padding: '15px 20px', 
+            width: '90%', 
+            borderRadius: '12px', 
+            border: `2px solid ${THEME.border}`, 
+            backgroundColor: THEME.panel,
+            color: THEME.text,
+            fontSize: '18px', 
+            outline: 'none',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
+            transition: 'border-color 0.3s'
+          }}
+        />
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '20px' }}>
+      <div style={{ 
+        background: THEME.panel, 
+        padding: '30px', 
+        borderRadius: '20px', 
+        border: `1px solid ${THEME.border}`, 
+        marginBottom: '30px',
+        boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)',
+        transition: 'transform 0.3s ease'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '15px'}}>
+          <span style={{ 
+            background: THEME.primary, 
+            color: '#fff', 
+            padding: '6px 14px', 
+            borderRadius: '20px', 
+            fontSize: '13px', 
+            textTransform: 'uppercase', 
+            fontWeight: 600,
+            letterSpacing: '0.5px'
+          }}>
+            {currentPhrase.category}
+          </span>
+        </div>
+        
+        <h2 style={{ color: THEME.text, fontSize: '2.2rem', margin: '20px 0', fontWeight: 600 }}>{currentPhrase.english}</h2>
+        
+        <div style={{ 
+          padding: '15px', 
+          borderRadius: '12px', 
+          background: THEME.bg, 
+          display: feedback ? 'block' : 'none', 
+          marginBottom: '20px',
+          border: feedback.startsWith('✅') ? `1px solid ${THEME.success}40` : `1px solid ${THEME.error}40`,
+        }}>
+          <p style={{ margin: 0, fontWeight: 600, fontSize: '1.1rem', color: feedback.startsWith('✅') ? THEME.success : THEME.error }}>
+            {feedback}
+          </p>
+        </div>
+        
+        <p style={{ fontSize: '18px', color: THEME.textMuted, fontStyle: 'italic', minHeight: '30px' }}>
+          {transcribedText ? `You said: "${transcribedText}"` : "Press the button and repeat the phrase..."}
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '40px', maxWidth: '500px', margin: '0 auto 40px auto' }}>
         <button 
           onClick={startListening}
           style={{
-            padding: '15px 30px', fontSize: '16px', borderRadius: '50px', border: 'none', cursor: 'pointer',
-            backgroundColor: isListening ? '#e74c3c' : '#2ecc71', color: 'white', fontWeight: 'bold', flex: 1
+            padding: '18px 30px', 
+            fontSize: '18px', 
+            borderRadius: '12px', 
+            border: 'none', 
+            cursor: 'pointer',
+            backgroundColor: isListening ? THEME.error : THEME.success, 
+            color: 'white', 
+            fontWeight: 'bold', 
+            flex: 2,
+            boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
+            transition: 'background-color 0.2s, transform 0.1s'
           }}
+          onMouseDown={(e) => e.target.style.transform = 'scale(0.98)'}
+          onMouseUp={(e) => e.target.style.transform = 'scale(1)'}
         >
-          {isListening ? '🛑 ESCUCHANDO...' : '🎙️ HABLAR'}
+          {isListening ? '🛑 LISTENING...' : '🎙️ TALK NOW'}
         </button>
 
         <button 
           onClick={nextPhrase}
           style={{
-            padding: '15px 25px', fontSize: '16px', borderRadius: '50px', border: 'none', cursor: 'pointer',
-            backgroundColor: '#3498db', color: 'white', fontWeight: 'bold', flex: 1
+            padding: '18px 20px', 
+            fontSize: '18px', 
+            borderRadius: '12px', 
+            border: 'none', 
+            cursor: 'pointer',
+            backgroundColor: THEME.panel, 
+            color: THEME.text, 
+            fontWeight: 600, 
+            flex: 1,
+            boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
+            transition: 'background-color 0.2s'
           }}
+          onMouseOver={(e) => e.target.style.backgroundColor = '#2d3748'}
+          onMouseOut={(e) => e.target.style.backgroundColor = THEME.panel}
         >
-          SIGUIENTE ➡️
+          NEXT ➡️
         </button>
       </div>
 
-      <div style={{ textAlign: 'left', marginTop: '20px' }}>
-        <p style={{ color: '#34495e', fontWeight: 'bold' }}>Frases disponibles ({filteredPhrases.length}):</p>
-        <div style={{ maxHeight: '150px', overflowY: 'auto', border: '1px solid #eee', borderRadius: '10px' }}>
+      <div style={{ textAlign: 'left', marginTop: '40px', borderTop: `1px solid ${THEME.border}`, paddingTop: '20px' }}>
+        <p style={{ color: THEME.textMuted, fontWeight: 600, marginBottom: '15px' }}>
+          Select a phrase to practice ({filteredPhrases.length} available):
+        </p>
+        <div style={{ 
+          maxHeight: '300px', 
+          overflowY: 'auto', 
+          border: `1px solid ${THEME.border}`, 
+          borderRadius: '12px',
+          backgroundColor: THEME.panel,
+          boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)'
+        }}>
           {filteredPhrases.map((f, i) => (
             <div key={i} onClick={() => { setCurrentPhrase(f); setFeedback(''); setTranscribedText(''); }}
-              style={{ padding: '10px', borderBottom: '1px solid #f1f1f1', cursor: 'pointer', background: currentPhrase.english === f.english ? '#e1f5fe' : 'white' }}>
-              <span style={{ color: '#3498db', fontSize: '14px' }}>{f.english}</span>
+              style={{ 
+                padding: '15px 20px', 
+                borderBottom: `1px solid ${THEME.border}`, 
+                cursor: 'pointer', 
+                transition: 'background-color 0.2s',
+                backgroundColor: currentPhrase.english === f.english ? `${THEME.primary}15` : 'transparent',
+                color: currentPhrase.english === f.english ? THEME.primary : THEME.text
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = `${THEME.border}50`}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = currentPhrase.english === f.english ? `${THEME.primary}15` : 'transparent'}
+            >
+              <span style={{ fontSize: '16px', fontWeight: currentPhrase.english === f.english ? 600 : 400 }}>
+                {f.english}
+              </span>
             </div>
           ))}
         </div>
       </div>
+      
+      <footer style={{ marginTop: '50px', padding: '20px', color: THEME.textMuted, fontSize: '14px', borderTop: `1px solid ${THEME.border}`}}>
+        Developed with ❤️ by Aleeffj07 & AI Coach. Start speaking now!
+      </footer>
     </div>
   );
 }
