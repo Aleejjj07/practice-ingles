@@ -158,7 +158,7 @@ export default function EnglishCoach() {
       </div>
 
       <div style={{ marginTop: '20px', textAlign: 'center', minHeight: '30px' }}>
-        {transcribedText && <p style={{ fontSize: '14px', color: '#9ca3af', fontStyle: 'italic' }}>You said: "{transcribedText}"</p>}
+        {transcribedText && <p style={{ fontSize: '14px', color: '4CC0D4', fontStyle: 'italic' }}>You said: "{transcribedText}"</p>}
       </div>
     </div>
   );
