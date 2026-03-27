@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 
+// Base de datos completa con imágenes ÚNICAS para CADA frase
 const FRASES_BASE = [
-  // --- GAMING & SOCIAL (Nuevas) ---
+  // --- GAMING & SOCIAL (ESO Favs) ---
   { english: "I need backup, help me!", category: "gaming", imageUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600" },
   { english: "Don't forget to like and subscribe.", category: "social", imageUrl: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=600" },
   { english: "The lag is unbearable today.", category: "gaming", imageUrl: "https://images.unsplash.com/photo-1593305841991-05c297ba326b?q=80&w=600" },
@@ -23,13 +24,13 @@ const FRASES_BASE = [
   { english: "Do you have this in a smaller size?", category: "shopping", imageUrl: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=600" },
   { english: "Can I pay with credit card?", category: "shopping", imageUrl: "https://images.unsplash.com/photo-1556742563-801685a7329b?q=80&w=600" },
   
-  // --- OTRAS ---
-  { english: "Nice to meet you, what's your name?", category: "greetings", imageUrl: "https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=600" },
-  { english: "Could you speak more slowly, please?", category: "help", imageUrl: "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?q=80&w=600" },
-  { english: "I need help, call an ambulance.", category: "emergency", imageUrl: "https://images.unsplash.com/photo-1587740896339-382a88e9988b?q=80&w=600" },
-  { english: "I am late for the meeting.", category: "work", imageUrl: "https://images.unsplash.com/photo-1506784926709-22f1ec395907?q=80&w=600" },
-  { english: "I lost my passport.", category: "emergency", imageUrl: "https://images.unsplash.com/photo-1544033527-b192daee1f5b?q=80&w=600" },
-  { english: "I am allergic to peanuts.", category: "health", imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=600" }
+  // --- OTRAS (GREETINGS, HELP, EMERGENCY, WORK, HEALTH) ---
+  { english: "Nice to meet you, what's your name?", category: "greetings", imageUrl: "https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=600" }, // Imagen de saludo
+  { english: "Could you speak more slowly, please?", category: "help", imageUrl: "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?q=80&w=600" },   // Imagen de alguien escuchando
+  { english: "I need help, call an ambulance.", category: "emergency", imageUrl: "https://images.unsplash.com/photo-1587740896339-382a88e9988b?q=80&w=600" }, // Imagen de ambulancia real
+  { english: "I am late for the meeting.", category: "work", imageUrl: "https://images.unsplash.com/photo-1506784926709-22f1ec395907?q=80&w=600" },      // Imagen de reloj/reunión
+  { english: "I lost my passport.", category: "emergency", imageUrl: "https://images.unsplash.com/photo-1544033527-b192daee1f5b?q=80&w=600" },           // Imagen de pasaporte
+  { english: "I am allergic to peanuts.", category: "health", imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=600" }     // Imagen de cacahuetes/alergia
 ];
 
 const THEME = {
