@@ -48,11 +48,12 @@ export default function EnglishCoach() {
 
   // Calcular rango según el nivel
   const getRank = () => {
-    if (level < 5) return "🌱 NOVICE";
-    if (level < 10) return "🚀 EXPLORER";
-    if (level < 20) return "🔥 PRO SPEAKER";
-    return "👑 MASTER";
+    if (level < 5) return "🌱 NOOB";
+    if (level < 10) return "⚡ RECLUTA";
+    if (level < 20) return "😎 INFLUENCER";
+    return "🐐 THE G.O.A.T."; // (Greatest Of All Time)
   };
+  
 
   // Subir de nivel cada 50 XP
   useEffect(() => {
