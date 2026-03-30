@@ -1,23 +1,35 @@
 import React, { useState } from 'react';
 
 const FRASES = [
-  // --- TUS FRASES DE ANTES (CON EMOJIS) ---
+  // --- GAMING ---
   { eng: "I need backup, help me!", cat: "GAMING", icon: "🎮", color: "#8b5cf6" },
-  { eng: "What time is my flight?", cat: "TRAVEL", icon: "✈️", color: "#06b6d4" },
-  { eng: "The check, please.", cat: "RESTAURANT", icon: "🧾", color: "#64748b" },
-  { eng: "I lost my passport.", cat: "EMERGENCY", icon: "📕", color: "#ef4444" },
-
-  // --- NUEVAS FRASES RELACIONADAS ---
   { eng: "The lag is unbearable today.", cat: "GAMING", icon: "🌐", color: "#8b5cf6" },
   { eng: "Enemy spotted on the right!", cat: "GAMING", icon: "🎯", color: "#8b5cf6" },
+  { eng: "Good game, well played everyone.", cat: "GAMING", icon: "🏆", color: "#8b5cf6" },
+  
+  // --- COLEGIO ---
   { eng: "Can I borrow your pen, please?", cat: "SCHOOL", icon: "✏️", color: "#f59e0b" },
   { eng: "I don't understand this exercise.", cat: "SCHOOL", icon: "📚", color: "#f59e0b" },
+  { eng: "Teacher, I have a question.", cat: "SCHOOL", icon: "🙋‍♂️", color: "#f59e0b" },
+
+  // --- VIAJES ---
+  { eng: "What time is my flight?", cat: "TRAVEL", icon: "✈️", color: "#06b6d4" },
   { eng: "Where is the nearest bathroom?", cat: "TRAVEL", icon: "🚻", color: "#06b6d4" },
+  { eng: "A ticket to London, please.", cat: "TRAVEL", icon: "🎫", color: "#06b6d4" },
+
+  // --- RESTAURANTE ---
+  { eng: "The check, please.", cat: "RESTAURANT", icon: "🧾", color: "#64748b" },
   { eng: "Can I have a glass of water?", cat: "RESTAURANT", icon: "🥛", color: "#64748b" },
-  { eng: "How much does this cost?", cat: "SHOPPING", icon: "💰", color: "#fbbf24" },
+  { eng: "I would like a burger.", cat: "RESTAURANT", icon: "🍔", color: "#64748b" },
+
+  // --- EMERGENCIAS ---
+  { eng: "I lost my passport.", cat: "EMERGENCY", icon: "📕", color: "#ef4444" },
   { eng: "Call an ambulance, please!", cat: "EMERGENCY", icon: "🚑", color: "#ef4444" },
-  { eng: "Nice to meet you, what's your name?", cat: "GREETINGS", icon: "👋", color: "#a855f7" },
-  { eng: "See you later, alligator!", cat: "GREETINGS", icon: "🐊", color: "#a855f7" }
+
+  // --- SALUDOS ---
+  { eng: "Nice to meet you!", cat: "GREETINGS", icon: "👋", color: "#a855f7" },
+  { eng: "See you later, alligator!", cat: "GREETINGS", icon: "🐊", color: "#a855f7" },
+  { eng: "Have a wonderful day!", cat: "GREETINGS", icon: "☀️", color: "#a855f7" }
 ];
 
 export default function App() {
