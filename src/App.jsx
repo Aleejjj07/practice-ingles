@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
-import confetti from 'canvas-confetti'; // Librería para la animación
+import confetti from 'canvas-confetti';
 
 const FRASES_BASE = [
   { english: "I need backup, help me!", category: "gaming", imageUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600" },
@@ -40,30 +40,15 @@ export default function EnglishCoach() {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
 
-  // Lógica de Subida de Nivel con Animación
   useEffect(() => {
     const newLevel = Math.floor(xp / 50) + 1;
     if (newLevel > level) {
       setLevel(newLevel);
-      
-      // LANZAR CONFETI 🎉
-      confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: [THEME.primary, THEME.gold, THEME.success]
-      });
-
-      // SONIDO DE VICTORIA (TTS como efecto)
+      confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: [THEME.primary, THEME.gold, THEME.success] });
       const msg = new SpeechSynthesisUtterance("Level Up!");
       msg.pitch = 1.5;
       window.speechSynthesis.speak(msg);
-
-      toast.success(`LEVEL UP! Now you are Level ${newLevel}`, {
-        icon: '🆙',
-        duration: 4000,
-        style: { background: THEME.gold, color: '#000', fontWeight: 'bold' }
-      });
+      toast.success(`LEVEL UP! Now Level ${newLevel}`, { icon: '🆙', style: { background: THEME.gold, color: '#000', fontWeight: 'bold' } });
     }
   }, [xp, level]);
 
@@ -134,8 +119,16 @@ export default function EnglishCoach() {
         </div>
       </div>
 
+      {/* TARJETA DE ESTUDIO CON IMAGEN ARREGLADA */}
       <div style={{ background: THEME.panel, borderRadius: '25px', overflow: 'hidden', border: `1px solid ${THEME.border}`, marginBottom: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
-        <img src={currentPhrase.imageUrl} style={{ width: '100%', height: '220px', objectFit: 'cover' }} alt="Scene" />
+        <div style={{ width: '100%', height: '220px', backgroundColor: '#2d3748', overflow: 'hidden' }}>
+            <img 
+                src={currentPhrase.imageUrl} 
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                alt="Context" 
+                key={currentPhrase.imageUrl} 
+            />
+        </div>
         <div style={{ padding: '20px', textAlign: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
             <h2 style={{ fontSize: '22px', margin: 0 }}>{currentPhrase.english}</h2>
@@ -145,6 +138,7 @@ export default function EnglishCoach() {
         </div>
       </div>
 
+      {/* BOTONES */}
       <div style={{ display: 'grid', gap: '10px' }}>
         <button onClick={startListening} style={{ padding: '18px', borderRadius: '15px', border: 'none', backgroundColor: isListening ? THEME.error : THEME.success, color: 'white', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer' }}>
           {isListening ? '🛑 LISTENING...' : '🎙️ TALK NOW'}
@@ -165,8 +159,12 @@ export default function EnglishCoach() {
         </button>
       </div>
 
-      <div style={{ width: '100%', height: '6px', background: '#374151', borderRadius: '3px', marginTop: '20px', overflow: 'hidden' }}>
-        <div style={{ width: `${(xp % 50) * 2}%`, height: '100%', background: THEME.primary, transition: 'width 0.4s' }}></div>
+      {/* BARRA DE PROGRESO INFERIOR (ESTO ES LO QUE NO VEÍAS) */}
+      <div style={{ marginTop: '20px' }}>
+        <p style={{ fontSize: '11px', color: '#6b7280', marginBottom: '5px', textAlign: 'center' }}>Progress to next level: {xp % 50} / 50 XP</p>
+        <div style={{ width: '100%', height: '8px', background: '#374151', borderRadius: '4px', overflow: 'hidden' }}>
+          <div style={{ width: `${(xp % 50) * 2}%`, height: '100%', background: THEME.primary, transition: 'width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}></div>
+        </div>
       </div>
     </div>
   );
