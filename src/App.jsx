@@ -1,36 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
+import confetti from 'canvas-confetti'; // Librería para la animación
 
-// Base de datos completa con imágenes ÚNICAS para CADA frase
 const FRASES_BASE = [
-  // --- GAMING & SOCIAL (ESO Favs) ---
   { english: "I need backup, help me!", category: "gaming", imageUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600" },
   { english: "Don't forget to like and subscribe.", category: "social", imageUrl: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=600" },
   { english: "The lag is unbearable today.", category: "gaming", imageUrl: "https://images.unsplash.com/photo-1593305841991-05c297ba326b?q=80&w=600" },
-  
-  // --- TRAVEL ---
   { english: "Where is the nearest bathroom?", category: "travel", imageUrl: "https://images.unsplash.com/photo-1581403664797-e751853d49f6?q=80&w=600" },
   { english: "I am looking for the train station.", category: "travel", imageUrl: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?q=80&w=600" },
   { english: "What time is my flight?", category: "travel", imageUrl: "https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?q=80&w=600" },
   { english: "Can you help me with my bags?", category: "travel", imageUrl: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=600" },
-  
-  // --- RESTAURANT ---
   { english: "Can I have a glass of water, please?", category: "restaurant", imageUrl: "https://images.unsplash.com/photo-1547595628-c61a29f496f0?q=80&w=600" },
   { english: "What do you recommend from the menu?", category: "restaurant", imageUrl: "https://images.unsplash.com/photo-1550966841-3ee7101157e7?q=80&w=600" },
   { english: "The check, please.", category: "restaurant", imageUrl: "https://images.unsplash.com/photo-1556742049-04ff43617161?q=80&w=600" },
-  
-  // --- SHOPPING ---
   { english: "How much does this cost?", category: "shopping", imageUrl: "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?q=80&w=600" },
   { english: "Do you have this in a smaller size?", category: "shopping", imageUrl: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=600" },
   { english: "Can I pay with credit card?", category: "shopping", imageUrl: "https://images.unsplash.com/photo-1556742563-801685a7329b?q=80&w=600" },
-  
-  // --- OTRAS (GREETINGS, HELP, EMERGENCY, WORK, HEALTH) ---
-  { english: "Nice to meet you, what's your name?", category: "greetings", imageUrl: "https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=600" }, // Imagen de saludo
-  { english: "Could you speak more slowly, please?", category: "help", imageUrl: "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?q=80&w=600" },   // Imagen de alguien escuchando
-  { english: "I need help, call an ambulance.", category: "emergency", imageUrl: "https://images.unsplash.com/photo-1587740896339-382a88e9988b?q=80&w=600" }, // Imagen de ambulancia real
-  { english: "I am late for the meeting.", category: "work", imageUrl: "https://images.unsplash.com/photo-1506784926709-22f1ec395907?q=80&w=600" },      // Imagen de reloj/reunión
-  { english: "I lost my passport.", category: "emergency", imageUrl: "https://images.unsplash.com/photo-1544033527-b192daee1f5b?q=80&w=600" },           // Imagen de pasaporte
-  { english: "I am allergic to peanuts.", category: "health", imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=600" }     // Imagen de cacahuetes/alergia
+  { english: "Nice to meet you, what's your name?", category: "greetings", imageUrl: "https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=600" },
+  { english: "Could you speak more slowly, please?", category: "help", imageUrl: "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?q=80&w=600" },
+  { english: "I need help, call an ambulance.", category: "emergency", imageUrl: "https://images.unsplash.com/photo-1587740896339-382a88e9988b?q=80&w=600" },
+  { english: "I am late for the meeting.", category: "work", imageUrl: "https://images.unsplash.com/photo-1506784926709-22f1ec395907?q=80&w=600" },
+  { english: "I lost my passport.", category: "emergency", imageUrl: "https://images.unsplash.com/photo-1544033527-b192daee1f5b?q=80&w=600" },
+  { english: "I am allergic to peanuts.", category: "health", imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=600" }
 ];
 
 const THEME = {
@@ -43,10 +34,38 @@ export default function EnglishCoach() {
   const [currentPhrase, setCurrentPhrase] = useState(FRASES_BASE[0]);
   const [feedback, setFeedback] = useState('');
   const [xp, setXp] = useState(0);
+  const [level, setLevel] = useState(1);
   const [audioUrl, setAudioUrl] = useState(null);
 
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+
+  // Lógica de Subida de Nivel con Animación
+  useEffect(() => {
+    const newLevel = Math.floor(xp / 50) + 1;
+    if (newLevel > level) {
+      setLevel(newLevel);
+      
+      // LANZAR CONFETI 🎉
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: [THEME.primary, THEME.gold, THEME.success]
+      });
+
+      // SONIDO DE VICTORIA (TTS como efecto)
+      const msg = new SpeechSynthesisUtterance("Level Up!");
+      msg.pitch = 1.5;
+      window.speechSynthesis.speak(msg);
+
+      toast.success(`LEVEL UP! Now you are Level ${newLevel}`, {
+        icon: '🆙',
+        duration: 4000,
+        style: { background: THEME.gold, color: '#000', fontWeight: 'bold' }
+      });
+    }
+  }, [xp, level]);
 
   const speakNative = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
@@ -56,7 +75,7 @@ export default function EnglishCoach() {
 
   const playMyVoice = () => {
     if (audioUrl) new Audio(audioUrl).play();
-    else toast("Graba tu voz primero", { icon: '🎙️' });
+    else toast("Record first!", { icon: '🎙️' });
   };
 
   const comparePhrases = (original, spoken) => {
@@ -64,9 +83,8 @@ export default function EnglishCoach() {
     if (clean(original) === clean(spoken)) {
       setFeedback(`✅ Perfect! +10 XP`);
       setXp(prev => prev + 10);
-      toast.success("Perfect Pronunciation!");
     } else {
-      setFeedback(`❌ Keep practicing! +2 XP`);
+      setFeedback(`❌ Try again! +2 XP`);
       setXp(prev => prev + 2);
     }
   };
@@ -74,7 +92,6 @@ export default function EnglishCoach() {
   const startListening = async () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return toast.error("Use Chrome.");
-
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream);
@@ -101,12 +118,11 @@ export default function EnglishCoach() {
     recognition.start();
   };
 
-  const level = Math.floor(xp / 50) + 1;
-
   return (
     <div style={{ minHeight: '100vh', backgroundColor: THEME.bg, color: THEME.text, padding: '15px', fontFamily: 'sans-serif', maxWidth: '450px', margin: 'auto' }}>
       <Toaster position="top-center" />
       
+      {/* HUD SUPERIOR */}
       <div style={{ display: 'flex', justifyContent: 'space-between', background: THEME.panel, padding: '15px', borderRadius: '15px', marginBottom: '15px', border: `1px solid ${THEME.border}` }}>
         <div>
           <div style={{fontSize: '10px', color: THEME.gold, fontWeight: 'bold'}}>LEVEL {level}</div>
@@ -148,8 +164,10 @@ export default function EnglishCoach() {
           NEXT PHRASE ➡️
         </button>
       </div>
-      
-      {transcribedText && <p style={{ textAlign: 'center', fontSize: '13px', color: '#6b7280', marginTop: '15px' }}>You said: "{transcribedText}"</p>}
+
+      <div style={{ width: '100%', height: '6px', background: '#374151', borderRadius: '3px', marginTop: '20px', overflow: 'hidden' }}>
+        <div style={{ width: `${(xp % 50) * 2}%`, height: '100%', background: THEME.primary, transition: 'width 0.4s' }}></div>
+      </div>
     </div>
   );
 }
